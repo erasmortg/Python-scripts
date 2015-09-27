@@ -1,0 +1,14 @@
+def FizzBuzz(min,max,total):
+	mult = min * max
+	listy = [None] * total
+	for number in range(total):
+		if (number % mult) == 0:
+			listy[number] = "FizzBuzz"
+		elif (number % min) == 0:
+			listy[number] = "Fizz"
+		elif (number % max) == 0:
+			listy[number] = "Buzz"
+		else:
+			listy[number] = number
+	print(listy)
+	
