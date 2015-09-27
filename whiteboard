@@ -21,3 +21,17 @@ def FizzBuzz(min,max,total):
 #starts at 1!
 #pass 3 arguments to the function call:
 #FizzBuzz2(3,5,100)
+def FizzBuzz2(min,max,total):
+	mult = min * max
+	listy = [None] * (total)
+	for number in list(range(1,total + 1)):
+		if (number % mult) == 0:
+			listy[number - 1] = "FizzBuzz"
+		elif (number % min) == 0:
+			listy[number - 1] = "Fizz"
+		elif (number % max) == 0:
+			listy[number - 1] = "Buzz"
+		else:
+			listy[number - 1] = number
+	print(listy)
+
