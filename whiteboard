@@ -36,3 +36,13 @@ def FizzBuzz2(min,max,total):
 	print(listy)
 
 
+#reverseString
+#pass one argument to the function call:
+#reverseString('train')
+def reverseString(string):
+	x = string
+	rev = [None] * len(x)
+	for letter in range(len(x)):
+		rev[letter] = x[len(string) - letter - 1]
+	print(''.join(rev))
+
