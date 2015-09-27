@@ -15,7 +15,7 @@ def FizzBuzz(min,max,total):
 		else:
 			listy[number] = number
 	print(listy)
-			
+	
 
 #FizzBuzz another version
 #starts at 1!
@@ -34,4 +34,5 @@ def FizzBuzz2(min,max,total):
 		else:
 			listy[number - 1] = number
 	print(listy)
+
 
