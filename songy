@@ -1,0 +1,122 @@
+#needed modules
+import datetime
+import pafy
+import re
+import os
+import json
+import time
+import selenium.webdriver as webdriver
+import selenium.webdriver.support.ui as ui
+from selenium.webdriver.common.keys import Keys
+
+#current time as var
+right_now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+#change directory
+os.chdir("C:\\Users\\Erasmo\\Desktop\\PyScripts\\songchanger")
+
+
+#get current loaded tabs
+#note that the current tab is named recovery.js
+#and sessionstore is NOT the current session (that gets created when firefox exits cleanly)
+
+
+#get the json that has the information from mozilla firefox
+with open('C:\\Users\\Erasmo\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\yvndh5em.default\\sessionstore-backups\\recovery.js', encoding='utf-8') as f:
+	content = json.load(f)
+
+
+
+
+# Now list the content bound to the keys. As the console may not be capable
+# to display all characters, write it to the file.
+with open('out.txt', 'w', encoding='utf-8') as f:
+    windows = content['windows']
+    for n, w in enumerate(windows, 1):  # the enumerate is used just for numbering the windows
+        f.write('\n\tWindow {}:\n'.format(n))
+        tabs = w['tabs']
+        for tab in tabs:
+            # The tab is a dictionary. Display only 'title' and 'url' from 
+            # 'entries' subdictionary.
+            e = tab['entries'][0]
+            f.write('\t\t{}\n\t\t{}\n\n'.format(e['url'], e['title']))
+
+
+
+f.close()
+
+
+
+#first check, if there is both stackoverflow and youtube open, carry only, else, restart:		
+if 'stackoverflow.com' and 'youtube.com/watch' in open('out.txt', encoding='utf-8').read():
+    print("true")
+else:
+	print("both are not open")
+	"""sleep for 600 seconds"""
+	for i in range(1,600):
+		time.sleep(1)
+		#print(i)
+		#time.sleep(600)
+		#restart from the beginning
+		#here i restart
+		#os.execv(__file__, sys.argv)
+
+
+
+#write a list that has all of the urls extracted from out.txt
+f = open("out.txt","r")
+fstringy = f.read()
+f.close()	
+
+#del(f)
+#regex for urls
+urlys = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', fstringy)
+#if you're looking at them, print them as vertical numbered list
+for i in range(0,len(urlys)):
+	print(i+1,urlys[i])
+
+#list comprehension for two lists, one of stackoverflow urls, the other of youtube urls
+stacky = [x for x in urlys if "stackoverflow.com" in x]
+print(stacky)
+youtubepafy = [x for x in urlys if "youtube.com/watch" in x]
+print(youtubepafy)
+
+
+#if there is more than one, just get the first one:
+vidy = pafy.new(youtubepafy[0])
+#read interesting stuff from youtube link:
+#push these
+vidy.title
+vidy.duration
+vidy.videoid
+#must log in
+#push youtube link into SO
+#variable for link
+if vidy and stacky:
+	print("both exist")
+	#create new variable
+	driver = webdriver.Firefox()
+	#open log in
+	driver.get('https://stackoverflow.com/users/login?ssrc=head&returnurl=http%3a%2f%2fstackoverflow.com%2f')
+	#send username
+	username = driver.find_element_by_name("email").send_keys( "YOURUSERNAMEGOESHERE" )
+	#send password
+	password = driver.find_element_by_name("password").send_keys( "YOURPASSWORDGOESHERE" )
+	#click!
+	driver.find_element_by_name("submit-button").click()
+	#let it load for 14 seconds
+	time.sleep(14)
+	#click on username link
+	driver.find_element_by_xpath("//div[@class='topbar']/div[@class='topbar-wrapper']/div[@class='topbar-links']/a[1]").click()
+	#rest for 14 seconds
+	time.sleep(14)
+	#click on edit
+	driver.find_element_by_xpath("//div[@class='container']/div[@class='snippet-hidden']/div[@class='user-show-new']/div[@class='subheader reloaded js-user-header']/div[@id='tabs']/a[3]").click()
+	#rest for 14 seconds
+	time.sleep(14)
+	#edit form
+	driver.find_element_by_id("wmd-input").send_keys('Last listened/saw/heard: {}. Length: {}. Id on Youtube: {}. Last updated: {} '.format(vidy.title, vidy.duration, vidy.videoid,right_now))
+	#click!
+	driver.find_elements_by_css_selector("input[type='button'][value='Save changes just for this community']")[0].click()
+	#go to sleep
+	driver.close()
