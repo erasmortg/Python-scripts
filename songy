@@ -8,6 +8,10 @@ import time
 import selenium.webdriver as webdriver
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.common.keys import Keys
+#if there is an actual SQL database
+#import PyMySQL
+#import PyMySQL.cursors
+#current time as var
 
 #current time as var
 right_now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -114,9 +118,22 @@ if vidy and stacky:
 	driver.find_element_by_xpath("//div[@class='container']/div[@class='snippet-hidden']/div[@class='user-show-new']/div[@class='subheader reloaded js-user-header']/div[@id='tabs']/a[3]").click()
 	#rest for 14 seconds
 	time.sleep(14)
+	#Here push the SQL
+	#with con as curs:
+	#	queryy = "INSERT INTO `table` (`title`,`duration`,`videoid`,`dates`,`times`) VALUES (%s, %s, %s, %s, %s)"
+	#	curs.execute(queryy,(, vidy.title, vidy.duration, vidy.videoid, right_now[0:10],right_now[11:19] )) #note that right_now is type(str) so have to pass the elements like so
+	#	con.commit()
+	#	con.close()
 	#edit form
-	driver.find_element_by_id("wmd-input").send_keys('Last listened/saw/heard: {}. Length: {}. Id on Youtube: {}. Last updated: {} '.format(vidy.title, vidy.duration, vidy.videoid,right_now))
+	#delete previous entry...
+	driver.find_element_by_id("wmd-input").send_Keys(Keys.CONTROL + "a")
+	driver.find_element_by_id("wmd-input").send_Keys(Keys.DELETE);
+	driver.find_element_by_id("wmd-input").send_keys('Before last shutdown, last listened/saw/heard: {}. Length: {}. Id on Youtube: {}. Last updated: {}. Current version 0.1. Get the script for Python 3.5 at: https://github.com/erasmortg/Python-scripts/blob/master/songy '.format(vidy.title, vidy.duration, vidy.videoid,right_now))
 	#click!
 	driver.find_elements_by_css_selector("input[type='button'][value='Save changes just for this community']")[0].click()
 	#go to sleep
 	driver.close()
+	#here i will send the previous entry into an sql db
+	time.sleep(600)#10 min sleep
+	#once more, but with a feeling!
+	os.execl(__file__, sys.argv)
